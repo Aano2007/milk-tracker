@@ -24,7 +24,7 @@ export const Route = createFileRoute("/")({
 });
 
 type EntryStatus = "drank" | "skipped";
-type Entry = { status: EntryStatus; reason?: string };
+type Entry = { status: EntryStatus; reason?: string | undefined };
 type Entries = Record<string, Entry>;
 
 const ENTRIES_KEY = "milkrun-entries-v1";
@@ -112,7 +112,7 @@ function Index() {
   const pastMonths = useMemo(() => {
     const map = new Map<string, { year: number; month: number; drank: number; skipped: number }>();
     for (const [k, e] of Object.entries(entries)) {
-      const [y, m] = k.split("-").map(Number);
+      const [y = 0, m = 1] = k.split("-").map(Number);
       const key = `${y}-${m}`;
       if (y === today.getFullYear() && m - 1 === today.getMonth()) continue;
       const cur = map.get(key) ?? { year: y, month: m - 1, drank: 0, skipped: 0 };
@@ -234,7 +234,7 @@ function Index() {
                   {isCurrentMonth ? "This month" : "Month"}
                 </p>
                 <h1 className="mt-1 font-display text-3xl leading-tight font-semibold text-balance">
-                  {MONTH_NAMES[month]} {year}
+                  {MONTH_NAMES[month]!} {year}
                 </h1>
               </div>
               <button
@@ -280,7 +280,7 @@ function Index() {
               >
                 ‹
               </button>
-              <p className="font-display text-base font-semibold">{MONTH_NAMES[month]}</p>
+              <p className="font-display text-base font-semibold">{MONTH_NAMES[month]!}</p>
               <button
                 onClick={() => shiftMonth(1)}
                 aria-label="Next month"
@@ -392,7 +392,7 @@ function Index() {
           <section className="mt-4">
             <div className="rounded-[20px] bg-berry/15 p-4 shadow-note-berry">
               <p className="text-sm font-semibold text-berry-deep">
-                Skipped {MONTH_NAMES[month].slice(0, 3)} {skipDay} — why?
+                Skipped {MONTH_NAMES[month]!.slice(0, 3)} {skipDay} — why?
               </p>
               <input
                 value={skipReason}
@@ -427,7 +427,7 @@ function Index() {
             <div className="flex items-start gap-3 rounded-[20px] bg-berry/15 p-4 shadow-note-berry">
               <span className="mt-0.5 size-3 shrink-0 rounded-full bg-berry" />
               <p className="text-sm font-medium text-pretty text-berry-deep">
-                {MONTH_NAMES[month].slice(0, 3)} {Number(latestSkip[0].split("-")[2])} · {latestSkip[1].reason}
+                {MONTH_NAMES[month]!.slice(0, 3)} {Number(latestSkip[0].split("-")[2])} · {latestSkip[1].reason}
               </p>
             </div>
           </section>
@@ -454,12 +454,12 @@ function Index() {
                 >
                   <span className="grid size-10 shrink-0 place-items-center rounded-2xl bg-milk">
                     <span className="font-display text-base font-semibold text-milk-deep">
-                      {MONTH_NAMES[m.month].slice(0, 3)}
+                      {MONTH_NAMES[m.month]!.slice(0, 3)}
                     </span>
                   </span>
                   <span className="flex-1 leading-tight">
                     <span className="block font-display text-sm font-semibold">
-                      {MONTH_NAMES[m.month]} {m.year}
+                      {MONTH_NAMES[m.month]!} {m.year}
                     </span>
                     <span className="block text-xs font-medium text-soft">
                       {m.drank} {m.drank === 1 ? "glass" : "glasses"} · {m.skipped} skipped
