@@ -181,8 +181,8 @@ function Index() {
         {/* top bar */}
         <header className="flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <div className="grid size-11 shrink-0 place-items-center rounded-2xl bg-card shadow-clay">
-              <span className="font-display text-xl leading-none font-semibold text-milk-deep">m</span>
+            <div className="grid size-11 shrink-0 place-items-center rounded-2xl bg-card shadow-clay overflow-hidden">
+              <img src="/milk-icon.png" alt="Milk" className="size-9 object-contain" />
             </div>
             <div className="leading-tight">
               <p className="font-display text-lg leading-none font-semibold">Milkrun</p>
