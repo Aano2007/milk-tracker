@@ -130,17 +130,20 @@ function Index() {
     const key = dateKey(year, month, day);
     const existing = entries[key];
     if (!existing) {
+      // empty → drank
       setEntries((prev) => ({ ...prev, [key]: { status: "drank" } }));
     } else if (existing.status === "drank") {
+      // drank → open skip dialog
       setSkipDay(day);
-      setSkipReason(existing.reason ?? "");
+      setSkipReason("");
     } else {
+      // skipped → clear (back to empty)
       setEntries((prev) => {
         const next = { ...prev };
         delete next[key];
         return next;
       });
-      if (skipDay === day) setSkipDay(null);
+      setSkipDay(null);
     }
   }
 
@@ -153,6 +156,7 @@ function Index() {
     }));
     setSkipDay(null);
     setSkipReason("");
+    (document.activeElement as HTMLElement)?.blur();
   }
 
   function shiftMonth(delta: number) {
@@ -167,6 +171,7 @@ function Index() {
     const n = Number(priceDraft);
     if (Number.isFinite(n) && n > 0) setPrice(n);
     setEditingPrice(false);
+    (document.activeElement as HTMLElement)?.blur();
   }
 
   const cells: Array<{ day: number; inMonth: boolean } | null> = [];
@@ -203,7 +208,7 @@ function Index() {
 
         {/* price editor */}
         {editingPrice && (
-          <div className="mt-4 flex items-center gap-2 rounded-[20px] bg-card p-4 shadow-clay">
+          <div className="mt-4 flex items-center gap-2 rounded-[20px] bg-card p-4 shadow-clay" onClick={(e) => e.stopPropagation()}>
             <label className="text-sm font-semibold text-soft" htmlFor="price-input">
               Price per day
             </label>
@@ -214,6 +219,8 @@ function Index() {
               step="0.5"
               value={priceDraft}
               onChange={(e) => setPriceDraft(e.target.value)}
+              onKeyDown={(e) => e.key === "Enter" && savePrice()}
+              autoFocus
               className="w-24 rounded-xl bg-background px-3 py-2 text-sm font-semibold text-foreground outline-none ring-butter focus:ring-2"
             />
             <button
@@ -221,6 +228,12 @@ function Index() {
               className="tile-press cursor-pointer rounded-xl bg-butter px-4 py-2 text-sm font-semibold text-butter-deep shadow-tile-butter"
             >
               Save
+            </button>
+            <button
+              onClick={() => setEditingPrice(false)}
+              className="tile-press cursor-pointer rounded-xl bg-card px-3 py-2 text-sm font-semibold text-soft shadow-clay-sm"
+            >
+              ✕
             </button>
           </div>
         )}
@@ -397,7 +410,9 @@ function Index() {
               <input
                 value={skipReason}
                 onChange={(e) => setSkipReason(e.target.value)}
+                onKeyDown={(e) => e.key === "Enter" && saveSkip()}
                 placeholder="e.g. no milk at the doorstep"
+                autoFocus
                 className="mt-2 w-full rounded-xl bg-card px-3 py-2 text-sm font-medium text-foreground outline-none ring-butter focus:ring-2"
               />
               <div className="mt-3 flex gap-2">
