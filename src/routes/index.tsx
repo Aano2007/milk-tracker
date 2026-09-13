@@ -219,9 +219,7 @@ function Index() {
               step="0.5"
               value={priceDraft}
               onChange={(e) => setPriceDraft(e.target.value)}
-              onKeyDown={(e) => e.key === "Enter" && savePrice()}
-              autoFocus
-              className="w-24 rounded-xl bg-background px-3 py-2 text-sm font-semibold text-foreground outline-none ring-butter focus:ring-2"
+              className="w-24 rounded-xl bg-background px-3 py-2 text-sm font-semibold text-foreground outline-none"
             />
             <button
               onClick={savePrice}
@@ -410,10 +408,8 @@ function Index() {
               <input
                 value={skipReason}
                 onChange={(e) => setSkipReason(e.target.value)}
-                onKeyDown={(e) => e.key === "Enter" && saveSkip()}
                 placeholder="e.g. no milk at the doorstep"
-                autoFocus
-                className="mt-2 w-full rounded-xl bg-card px-3 py-2 text-sm font-medium text-foreground outline-none ring-butter focus:ring-2"
+                className="mt-2 w-full rounded-xl bg-card px-3 py-2 text-sm font-medium text-foreground outline-none"
               />
               <div className="mt-3 flex gap-2">
                 <button
