@@ -156,6 +156,7 @@ function Index() {
     }));
     setSkipDay(null);
     setSkipReason("");
+    (document.activeElement as HTMLElement)?.blur();
   }
 
   function shiftMonth(delta: number) {
@@ -170,6 +171,7 @@ function Index() {
     const n = Number(priceDraft);
     if (Number.isFinite(n) && n > 0) setPrice(n);
     setEditingPrice(false);
+    (document.activeElement as HTMLElement)?.blur();
   }
 
   const cells: Array<{ day: number; inMonth: boolean } | null> = [];
