@@ -76,7 +76,7 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
   head: () => ({
     meta: [
       { charSet: "utf-8" },
-      { name: "viewport", content: "width=device-width, initial-scale=1" },
+      { name: "viewport", content: "width=device-width, initial-scale=1, interactive-widget=resizes-content" },
       { title: "Milkrun — daily milk tracker" },
       { name: "description", content: "Track daily milk, log skips with reasons, and see your monthly milk cost." },
       { name: "author", content: "Milkrun" },
