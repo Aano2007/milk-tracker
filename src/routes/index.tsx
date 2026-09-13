@@ -67,7 +67,7 @@ function Index() {
   const [hydrated, setHydrated] = useState(false);
   const [view, setView] = useState({ year: today.getFullYear(), month: today.getMonth() });
   const [skipDay, setSkipDay] = useState<number | null>(null);
-  const skipReasonRef = useRef("");
+  const [skipReason, setSkipReason] = useState("");
   const [editingPrice, setEditingPrice] = useState(false);
   const priceDraftRef = useRef("");
 
@@ -135,7 +135,7 @@ function Index() {
     } else if (existing.status === "drank") {
       // drank → open skip dialog
       setSkipDay(day);
-      skipReasonRef.current = "";
+      setSkipReason("");
     } else {
       // skipped → clear (back to empty)
       setEntries((prev) => {
@@ -152,10 +152,10 @@ function Index() {
     const key = dateKey(year, month, skipDay);
     setEntries((prev) => ({
       ...prev,
-      [key]: { status: "skipped", reason: skipReasonRef.current.trim() || undefined },
+      [key]: { status: "skipped", reason: skipReason.trim() || undefined },
     }));
     setSkipDay(null);
-    skipReasonRef.current = "";
+    setSkipReason("");
   }
 
   function shiftMonth(delta: number) {
@@ -404,9 +404,12 @@ function Index() {
                 Skipped {MONTH_NAMES[month]!.slice(0, 3)} {skipDay} — why?
               </p>
               <input
-                defaultValue=""
-                onChange={(e) => { skipReasonRef.current = e.target.value; }}
+                value={skipReason}
+                onChange={(e) => setSkipReason(e.target.value)}
                 placeholder="e.g. no milk at the doorstep"
+                autoComplete="off"
+                autoCorrect="off"
+                autoCapitalize="off"
                 className="mt-2 w-full rounded-xl bg-card px-3 py-2 text-sm font-medium text-foreground outline-none ring-butter focus:ring-2"
               />
               <div className="mt-3 flex gap-2">
@@ -419,7 +422,7 @@ function Index() {
                 <button
                   onClick={() => {
                     setSkipDay(null);
-                    skipReasonRef.current = "";
+                    setSkipReason("");
                   }}
                   className="tile-press cursor-pointer rounded-xl bg-card px-4 py-2 text-sm font-semibold text-soft shadow-clay-sm"
                 >
