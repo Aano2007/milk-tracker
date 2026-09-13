@@ -138,4 +138,8 @@
 @utility tile-press {
   -webkit-tap-highlight-color: transparent;
   touch-action: manipulation;
+
+  &:active {
+    opacity: 0.75;
+  }
 }
