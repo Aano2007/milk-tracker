@@ -136,10 +136,10 @@
 }
 
 @utility tile-press {
-  transition: transform 0.1s ease;
   -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation;
 
   &:active {
-    transform: scale(0.93);
+    opacity: 0.75;
   }
 }
