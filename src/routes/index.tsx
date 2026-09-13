@@ -1,5 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -67,9 +67,9 @@ function Index() {
   const [hydrated, setHydrated] = useState(false);
   const [view, setView] = useState({ year: today.getFullYear(), month: today.getMonth() });
   const [skipDay, setSkipDay] = useState<number | null>(null);
-  const [skipReason, setSkipReason] = useState("");
+  const skipReasonRef = useRef("");
   const [editingPrice, setEditingPrice] = useState(false);
-  const [priceDraft, setPriceDraft] = useState("");
+  const priceDraftRef = useRef("");
 
   useEffect(() => {
     setEntries(loadEntries());
@@ -135,7 +135,7 @@ function Index() {
     } else if (existing.status === "drank") {
       // drank → open skip dialog
       setSkipDay(day);
-      setSkipReason("");
+      skipReasonRef.current = "";
     } else {
       // skipped → clear (back to empty)
       setEntries((prev) => {
@@ -152,11 +152,10 @@ function Index() {
     const key = dateKey(year, month, skipDay);
     setEntries((prev) => ({
       ...prev,
-      [key]: { status: "skipped", reason: skipReason.trim() || undefined },
+      [key]: { status: "skipped", reason: skipReasonRef.current.trim() || undefined },
     }));
     setSkipDay(null);
-    setSkipReason("");
-    (document.activeElement as HTMLElement)?.blur();
+    skipReasonRef.current = "";
   }
 
   function shiftMonth(delta: number) {
@@ -168,10 +167,9 @@ function Index() {
   }
 
   function savePrice() {
-    const n = Number(priceDraft);
+    const n = Number(priceDraftRef.current);
     if (Number.isFinite(n) && n > 0) setPrice(n);
     setEditingPrice(false);
-    (document.activeElement as HTMLElement)?.blur();
   }
 
   const cells: Array<{ day: number; inMonth: boolean } | null> = [];
@@ -197,7 +195,7 @@ function Index() {
           <button
             onClick={() => {
               setEditingPrice(true);
-              setPriceDraft(String(price));
+              priceDraftRef.current = String(price);
             }}
             aria-label="Edit daily milk price"
             className="tile-press grid size-10 shrink-0 cursor-pointer place-items-center rounded-2xl bg-card text-soft shadow-clay-sm"
@@ -217,10 +215,8 @@ function Index() {
               type="number"
               min="0"
               step="0.5"
-              value={priceDraft}
-              onChange={(e) => setPriceDraft(e.target.value)}
-              onKeyDown={(e) => e.key === "Enter" && savePrice()}
-              autoFocus
+              defaultValue={String(price)}
+              onChange={(e) => { priceDraftRef.current = e.target.value; }}
               className="w-24 rounded-xl bg-background px-3 py-2 text-sm font-semibold text-foreground outline-none ring-butter focus:ring-2"
             />
             <button
@@ -253,7 +249,7 @@ function Index() {
               <button
                 onClick={() => {
                   setEditingPrice(true);
-                  setPriceDraft(String(price));
+                  priceDraftRef.current = String(price);
                 }}
                 className="tile-press shrink-0 cursor-pointer rounded-2xl bg-background px-3 py-2 text-xs font-semibold text-soft shadow-clay-sm"
               >
@@ -408,11 +404,9 @@ function Index() {
                 Skipped {MONTH_NAMES[month]!.slice(0, 3)} {skipDay} — why?
               </p>
               <input
-                value={skipReason}
-                onChange={(e) => setSkipReason(e.target.value)}
-                onKeyDown={(e) => e.key === "Enter" && saveSkip()}
+                defaultValue=""
+                onChange={(e) => { skipReasonRef.current = e.target.value; }}
                 placeholder="e.g. no milk at the doorstep"
-                autoFocus
                 className="mt-2 w-full rounded-xl bg-card px-3 py-2 text-sm font-medium text-foreground outline-none ring-butter focus:ring-2"
               />
               <div className="mt-3 flex gap-2">
@@ -425,7 +419,7 @@ function Index() {
                 <button
                   onClick={() => {
                     setSkipDay(null);
-                    setSkipReason("");
+                    skipReasonRef.current = "";
                   }}
                   className="tile-press cursor-pointer rounded-xl bg-card px-4 py-2 text-sm font-semibold text-soft shadow-clay-sm"
                 >
